@@ -20,6 +20,11 @@ run/main_scene="uid://c6ujt274jwibv"
 config/features=PackedStringArray("4.7")
 config/icon="res://icon.webp"
 
+[display]
+
+window/size/viewport_width=720
+window/size/viewport_height=540
+
 [editor]
 
 version_control/plugin_name="GitPlugin"
