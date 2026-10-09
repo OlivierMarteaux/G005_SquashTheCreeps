@@ -4,6 +4,10 @@ extends CharacterBody3D
 @export var speed = 14
 # The downward acceleration when in the air, in meters per second squared.
 @export var fall_acceleration = 75
+# jump impulsion
+@export var jump_impulse = 20
+# bounce impulsion
+@export var bounce_impulse = 16
 
 var target_velocity = Vector3.ZERO
 
@@ -31,9 +35,25 @@ func _physics_process(delta):
 	target_velocity.x = direction.x * speed
 	target_velocity.z = direction.z * speed
 
-	# Vertical Velocity
+	# Falling down
 	if not is_on_floor(): # If in the air, fall towards the floor. Literally gravity
 		target_velocity.y = target_velocity.y - (fall_acceleration * delta)
+
+	# Jumping
+	if is_on_floor() && Input.is_action_just_pressed("jump") :
+		target_velocity.y = jump_impulse
+		
+	# Collision management
+	for index in range(get_slide_collision_count()):
+		var collision = get_slide_collision(index)
+		if collision.get_collider() == null :
+			continue
+		if collision.get_collider().is_in_group("mob") :
+			var mob = collision.get_collider()
+			if Vector3.UP.dot(collision.get_normal()) > 0.1 :
+				mob.squash()
+				target_velocity.y = bounce_impulse
+				break
 
 	# Moving the Character
 	velocity = target_velocity
